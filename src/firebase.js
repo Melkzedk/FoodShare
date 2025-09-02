@@ -7,12 +7,13 @@ import { getMessaging } from 'firebase/messaging';
 
 // replace with YOUR firebase config values
 const firebaseConfig = {
-  apiKey: "YOUR_APIKEY",
-  authDomain: "YOUR_AUTHDOMAIN",
-  projectId: "YOUR_PROJECTID",
-  storageBucket: "YOUR_STORAGEBUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAmSOU2wUQyF3mKNfR_H24VS5OgEM0YOE4",
+  authDomain: "foodshare-d7850.firebaseapp.com",
+  projectId: "foodshare-d7850",
+  storageBucket: "foodshare-d7850.firebasestorage.app",
+  messagingSenderId: "1028160739189",
+  appId: "1:1028160739189:web:30f8473089ef47d970653c",
+  measurementId: "G-BCW5V67SKX"
 };
 
 const app = initializeApp(firebaseConfig);
