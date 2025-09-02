@@ -11,6 +11,8 @@ export default function PostForm() {
   const [expiry, setExpiry] = useState('');
   const [image, setImage] = useState(null);
   const [latLng, setLatLng] = useState(null);
+  const [message, setMessage] = useState(null); // success/error feedback
+  const [loading, setLoading] = useState(false);
 
   // Get user location
   const useMyLocation = () => {
@@ -25,42 +27,62 @@ export default function PostForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!latLng) return alert('Please provide pickup location (use My Location or enter manually)');
-    let imageUrl = '';
-    if (image) {
-      const storageRef = ref(storage, `images/${Date.now()}_${image.name}`);
-      const snap = await uploadBytes(storageRef, image);
-      imageUrl = await getDownloadURL(snap.ref);
+    setMessage(null);
+    setLoading(true);
+
+    try {
+      if (!latLng) throw new Error('Please provide pickup location (use My Location).');
+
+      let imageUrl = '';
+      if (image) {
+        const storageRef = ref(storage, `images/${Date.now()}_${image.name}`);
+        const snap = await uploadBytes(storageRef, image);
+        imageUrl = await getDownloadURL(snap.ref);
+      }
+
+      const geohash = geohashForLocation([latLng.lat, latLng.lng]);
+
+      await addDoc(collection(db, 'posts'), {
+        title,
+        description: desc,
+        quantity: qty,
+        expiry: expiry ? new Date(expiry) : null,
+        imageUrl,
+        lat: latLng.lat,
+        lng: latLng.lng,
+        geohash,
+        available: true,
+        userId: auth.currentUser?.uid || null,
+        createdAt: serverTimestamp(),
+      });
+
+      // reset fields
+      setTitle('');
+      setDesc('');
+      setQty('');
+      setExpiry('');
+      setImage(null);
+      setLatLng(null);
+
+      setMessage({ type: 'success', text: '✅ Food posted successfully!' });
+    } catch (err) {
+      console.error('Error posting: ', err);
+      setMessage({ type: 'danger', text: `❌ Failed to post: ${err.message}` });
+    } finally {
+      setLoading(false);
     }
-
-    const geohash = geohashForLocation([latLng.lat, latLng.lng]);
-
-    await addDoc(collection(db, 'posts'), {
-      title,
-      description: desc,
-      quantity: qty,
-      expiry: expiry ? new Date(expiry) : null,
-      imageUrl,
-      lat: latLng.lat,
-      lng: latLng.lng,
-      geohash,
-      available: true,
-      userId: auth.currentUser.uid,
-      createdAt: serverTimestamp(),
-    });
-
-    // reset fields
-    setTitle('');
-    setDesc('');
-    setQty('');
-    setExpiry('');
-    setImage(null);
-    alert('Posted! Thanks for sharing.');
   };
 
   return (
     <div className="container mt-4">
       <h3 className="mb-3">Share Food</h3>
+
+      {message && (
+        <div className={`alert alert-${message.type}`} role="alert">
+          {message.text}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="card shadow-sm" style={{ maxWidth: '600px' }}>
         <div className="card-body">
           <div className="mb-3">
@@ -123,8 +145,8 @@ export default function PostForm() {
 
         {/* Sticky footer with button */}
         <div className="card-footer bg-white position-sticky bottom-0">
-          <button type="submit" className="btn btn-success w-100">
-            Post Food
+          <button type="submit" className="btn btn-success w-100" disabled={loading}>
+            {loading ? 'Posting...' : 'Post Food'}
           </button>
         </div>
       </form>

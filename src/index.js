@@ -7,6 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css';
 import { AuthProvider } from './AuthContext/AuthContext';
 import { BrowserRouter } from 'react-router-dom';
+import "leaflet/dist/leaflet.css";
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
