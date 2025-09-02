@@ -5,12 +5,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  apiKey: "AIzaSyAmSOU2wUQyF3mKNfR_H24VS5OgEM0YOE4",
+  authDomain: "foodshare-d7850.firebaseapp.com",
+  projectId: "foodshare-d7850",
+  storageBucket: "foodshare-d7850.appspot.com", // 🔥 change to appspot.com
+  messagingSenderId: "1028160739189",
+  appId: "1:1028160739189:web:30f8473089ef47d970653c",
+  measurementId: "G-BCW5V67SKX",
 };
 
 // Initialize Firebase
