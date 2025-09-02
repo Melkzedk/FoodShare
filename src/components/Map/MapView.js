@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import L from 'leaflet';
 
 export default function MapView() {
