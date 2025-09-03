@@ -8,6 +8,7 @@ return (
 <div>
 <h4>Profile</h4>
 <p><strong>Email:</strong> {currentUser?.email}</p>
+<p><strong>Location: Kenya</strong></p>
 </div>
 );
 }
