@@ -169,7 +169,7 @@ export default function PostForm() {
 
         <div className="card-footer bg-white position-sticky bottom-0">
           <button type="submit" className="btn btn-success w-100" disabled={loading}>
-            {loading ? 'Posting...' : 'Post Food'}
+            {loading ? 'Posting....' : 'Post Food'}
           </button>
         </div>
       </form>
