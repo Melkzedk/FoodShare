@@ -1,27 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import FoodCard from './FoodCard';
 
-
 export default function FoodList() {
-const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
+  useEffect(() => {
+    // Query Firestore posts, newest first
+    const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setPosts(data);
+    });
 
-useEffect(() => {
-const q = query(collection(db, 'posts'), where('available', '==', true), orderBy('createdAt', 'desc'));
-const unsub = onSnapshot(q, snap => {
-const arr = [];
-snap.forEach(doc => arr.push({ id: doc.id, ...doc.data() }));
-setPosts(arr);
-});
-return unsub;
-}, []);
+    return () => unsubscribe();
+  }, []);
 
-
-return (
-<div>
-{posts.length === 0 ? <p>No available posts yet.</p> : posts.map(p => <FoodCard key={p.id} post={p} />)}
-</div>
-);
+  return (
+    <div className="container mt-4">
+      <h3 className="mb-3">Available Food</h3>
+      <div className="row">
+        {posts.length > 0 ? (
+          posts.map((post) => (
+            <div key={post.id} className="col-md-4 mb-3">
+              <FoodCard post={post} />
+            </div>
+          ))
+        ) : (
+          <p>No food posts yet.</p>
+        )}
+      </div>
+    </div>
+  );
 }
