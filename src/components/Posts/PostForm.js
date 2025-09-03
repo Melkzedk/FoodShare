@@ -8,6 +8,7 @@ export default function PostForm() {
   const [desc, setDesc] = useState('');
   const [qty, setQty] = useState('');
   const [expiry, setExpiry] = useState('');
+  const [phone, setPhone] = useState(''); // 🔥 WhatsApp phone
   const [imageBase64, setImageBase64] = useState('');
   const [latLng, setLatLng] = useState(null);
   const [message, setMessage] = useState(null);
@@ -43,6 +44,7 @@ export default function PostForm() {
 
     try {
       if (!latLng) throw new Error('Please provide pickup location (use My Location).');
+      if (!phone) throw new Error('Please provide your WhatsApp number.');
 
       const geohash = geohashForLocation([latLng.lat, latLng.lng]);
 
@@ -51,12 +53,13 @@ export default function PostForm() {
         description: desc,
         quantity: qty,
         expiry: expiry ? new Date(expiry) : null,
-        imageBase64, // 🔥 Save Base64 directly
+        imageBase64,
         lat: latLng.lat,
         lng: latLng.lng,
         geohash,
         available: true,
         userId: auth.currentUser?.uid || null,
+        phone, // ✅ Save WhatsApp phone number
         createdAt: serverTimestamp(),
       });
 
@@ -65,6 +68,7 @@ export default function PostForm() {
       setDesc('');
       setQty('');
       setExpiry('');
+      setPhone('');
       setImageBase64('');
       setLatLng(null);
 
@@ -141,6 +145,18 @@ export default function PostForm() {
               value={expiry}
               onChange={(e) => setExpiry(e.target.value)}
               className="form-control"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">WhatsApp Number</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="form-control"
+              placeholder="e.g., 254712345678"
+              required
             />
           </div>
 
