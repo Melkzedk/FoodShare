@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { db, storage, auth } from '../../firebase';
+import { db, auth } from '../../firebase'; // removed storage
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { geohashForLocation } from 'geofire-common';
 
 export default function PostForm() {
@@ -9,10 +8,22 @@ export default function PostForm() {
   const [desc, setDesc] = useState('');
   const [qty, setQty] = useState('');
   const [expiry, setExpiry] = useState('');
-  const [image, setImage] = useState(null);
+  const [imageBase64, setImageBase64] = useState('');
   const [latLng, setLatLng] = useState(null);
-  const [message, setMessage] = useState(null); // success/error feedback
+  const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Convert selected file to Base64 string
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageBase64(reader.result); // base64 string
+    };
+    reader.readAsDataURL(file); // convert file → base64
+  };
 
   // Get user location
   const useMyLocation = () => {
@@ -33,13 +44,6 @@ export default function PostForm() {
     try {
       if (!latLng) throw new Error('Please provide pickup location (use My Location).');
 
-      let imageUrl = '';
-      if (image) {
-        const storageRef = ref(storage, `images/${Date.now()}_${image.name}`);
-        const snap = await uploadBytes(storageRef, image);
-        imageUrl = await getDownloadURL(snap.ref);
-      }
-
       const geohash = geohashForLocation([latLng.lat, latLng.lng]);
 
       await addDoc(collection(db, 'posts'), {
@@ -47,7 +51,7 @@ export default function PostForm() {
         description: desc,
         quantity: qty,
         expiry: expiry ? new Date(expiry) : null,
-        imageUrl,
+        imageBase64, // 🔥 Save Base64 directly
         lat: latLng.lat,
         lng: latLng.lng,
         geohash,
@@ -61,7 +65,7 @@ export default function PostForm() {
       setDesc('');
       setQty('');
       setExpiry('');
-      setImage(null);
+      setImageBase64('');
       setLatLng(null);
 
       setMessage({ type: 'success', text: '✅ Food posted successfully!' });
@@ -87,11 +91,15 @@ export default function PostForm() {
         <div className="card-body">
           <div className="mb-3">
             <label className="form-label">Food Image</label>
-            <input
-              type="file"
-              className="form-control"
-              onChange={(e) => setImage(e.target.files[0])}
-            />
+            <input type="file" className="form-control" onChange={handleImageChange} />
+            {imageBase64 && (
+              <img
+                src={imageBase64}
+                alt="Preview"
+                className="img-thumbnail mt-2"
+                style={{ maxHeight: '150px' }}
+              />
+            )}
           </div>
 
           <div className="mb-3">
@@ -143,7 +151,6 @@ export default function PostForm() {
           </div>
         </div>
 
-        {/* Sticky footer with button */}
         <div className="card-footer bg-white position-sticky bottom-0">
           <button type="submit" className="btn btn-success w-100" disabled={loading}>
             {loading ? 'Posting...' : 'Post Food'}
