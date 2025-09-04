@@ -7,6 +7,7 @@ import Register from './components/Auth/Register';
 import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import FoodList from './components/Posts/FoodList'; // ✅ import FoodList
+import ResetPassword from './components/Auth/ResetPassword'; // Import ResetPassword component
 
 function App() {
   return (
