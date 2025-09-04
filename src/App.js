@@ -26,6 +26,7 @@ function App() {
             } 
           />
           <Route path="/posts" element={<FoodList />} /> {/* ✅ Added route for posts */}
+          <Route path='reset-password' element={<ResetPassword />} /> {/* ResetPassword route */}
         </Routes>
       </div>
     </div>
