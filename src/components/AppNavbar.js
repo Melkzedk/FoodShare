@@ -3,7 +3,7 @@ import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext/AuthContext';
 import { FiHome, FiList, FiUser, FiLogIn, FiUserPlus, FiLogOut } from 'react-icons/fi';
-import logo from '../Images/foodshare.png';
+import logo from '../Images/foodshare.png'; //import image logo
 
 export default function AppNavbar() {
   const { currentUser, logout } = useAuth();
