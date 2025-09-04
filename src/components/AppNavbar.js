@@ -24,7 +24,7 @@ export default function AppNavbar() {
         {/* ✅ Logo + Brand */}
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
           <img
-            src="/logo.png" // Place your Foodshare logo in /public folder
+            src={logo}
             alt="Foodshare"
             width="35"
             height="35"
